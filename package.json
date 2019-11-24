@@ -1,0 +1,14 @@
+{
+  "name": "ngasal",
+  "version": "1.0.0",
+  "description": "Ini cuman buat belajar ElectronJS",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Amri Shodiq",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "electron": "^7.1.2"
+  }
+}
