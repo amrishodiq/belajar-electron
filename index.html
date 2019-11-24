@@ -2,8 +2,56 @@
 <html>
 	<head>
 		<title>Ngasal</title>
+		<style>
+		webview {
+			width:100%;
+			height:100%;
+		}
+		body {
+    			width: 100vw;
+    			height: 100vh;
+			padding: 0px;
+			margin: 0px;
+		}
+		</style>
 	</head>
 	<body>
-		<h1>Sorry, Bro. Ini gue ngasal doang.</h1>
+		<webview id="webview" preload="./injected.js" nodeintegration="on" autosize="on"></webview>
+		<script>
+			const loadUri = (uri) => {
+				webview.src = uri;
+			}
+	
+			const requestReport = () => {
+				webview.send('report');
+			}
+
+			const { ipcRenderer } = require('electron');
+
+			// Laporkan lagi ke main process (yang ada di Terminal)
+			const reportToMain = (content) => {
+				ipcRenderer.send('result', content);
+			}
+
+			var webview = document.getElementById('webview');
+			let defaultUri = 'file://' + __dirname + '/remote-content/default.html';
+			let uri = 'file://' + __dirname + '/remote-content/token.json';
+		
+			// Simulasi OAUTH dengan pending 10 detik	
+			loadUri(defaultUri);
+			setTimeout(() => { loadUri(uri); }, 10000);
+
+			webview.addEventListener('did-stop-loading', () => {
+				let url = webview.getURL();
+				if (url.includes('token.json')) {
+					requestReport();
+				}
+			});
+
+			// Dengerin kalo ada IPC message dari dalam webview
+			webview.addEventListener('ipc-message', (event) => {
+				reportToMain(event.channel);
+			});
+		</script>
 	</body>
 </html>
